@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+</head>
+<body>
+  <form id="viewDoneTasksForm">
+    <label for="taskName">Done Task Name:</label>
+    <select id="taskName" name="taskName">
+      <option value="">Select a done task</option>
+    </select>
+    <br><br>
+    <input type="button" value="View Task" onclick="viewTask()">
+    <br><br>
+    <label for="rejectReason">Reject Reason:</label>
+    <textarea id="rejectReason" name="rejectReason"></textarea>
+    <br><br>
+    <input type="button" value="Reject Task" onclick="rejectTask()">
+  </form>
+
+  <script>
+    function fetchDoneTasks() {
+      google.script.run.withSuccessHandler(populateDoneTaskNames).getDoneTaskNames();
+    }
+
+    function populateDoneTaskNames(taskNames) {
+      var taskNameSelect = document.getElementById('taskName');
+      taskNameSelect.innerHTML = '<option value="">Select a done task</option>';
+      for (var i = 0; i < taskNames.length; i++) {
+        var option = document.createElement('option');
+        option.value = taskNames[i];
+        option.text = taskNames[i];
+        taskNameSelect.add(option);
+      }
+    }
+
+    function viewTask() {
+      var taskName = document.getElementById('taskName').value;
+      if (taskName) {
+        google.script.run.withSuccessHandler(displayTaskReport).generateTaskReport(taskName);
+      }
+    }
+
+    function displayTaskReport(reportHtml) {
+      var reportWindow = window.open('', '_blank', 'width=600,height=400');
+      reportWindow.document.write(reportHtml);
+      reportWindow.document.close();
+    }
+
+    function rejectTask() {
+      var taskName = document.getElementById('taskName').value;
+      var rejectReason = document.getElementById('rejectReason').value;
+      if (taskName && rejectReason) {
+        google.script.run.rejectTask(taskName, rejectReason);
+        google.script.host.close();
+      } else {
+        alert('Please select a task and provide a reject reason.');
+      }
+    }
+
+    fetchDoneTasks();
+  </script>
+</body>
+</html>

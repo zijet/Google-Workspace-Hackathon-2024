@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+</head>
+<body>
+  <form id="searchForm">
+    <label for="searchKeyword">Keyword:</label>
+    <input type="text" id="searchKeyword" name="searchKeyword">
+    <br><br>
+    <input type="button" value="Search" onclick="searchTasks()">
+  </form>
+
+  <script>
+    function searchTasks() {
+      var form = document.getElementById('searchForm');
+      var keyword = form.searchKeyword.value;
+      google.script.run.searchTasks(keyword);
+      google.script.host.close();
+    }
+  </script>
+</body>
+</html>

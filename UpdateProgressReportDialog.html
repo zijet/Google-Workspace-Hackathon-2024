@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+</head>
+<body>
+  <form id="updateProgressForm">
+    <label for="taskName">Task Name:</label>
+    <select id="taskName" name="taskName">
+      <option value="">Select a task</option>
+    </select>
+    <br><br>
+    <label for="aim">Aim to finish today:</label>
+    <input type="text" id="aim" name="aim">
+    <br><br>
+    <label for="progress">Current progress:</label>
+    <input type="text" id="progress" name="progress">
+    <br><br>
+    <label for="status">Status:</label>
+    <input type="text" id="status" name="status">
+    <br><br>
+    <input type="button" value="Submit" onclick="submitForm()">
+  </form>
+
+  <script>
+    function fetchTasks() {
+      google.script.run.withSuccessHandler(populateTaskNames).getTaskNames();
+    }
+
+    function populateTaskNames(taskNames) {
+      var taskNameSelect = document.getElementById('taskName');
+      taskNameSelect.innerHTML = '<option value="">Select a task</option>';
+      for (var i = 0; i < taskNames.length; i++) {
+        var option = document.createElement('option');
+        option.value = taskNames[i];
+        option.text = taskNames[i];
+        taskNameSelect.add(option);
+      }
+    }
+
+    function submitForm() {
+      var form = document.getElementById('updateProgressForm');
+      var taskName = form.taskName.value;
+      var progressReport = `Aim to finish today: ${form.aim.value}\nCurrent progress: ${form.progress.value}\nStatus: ${form.status.value}`;
+
+      google.script.run.updateProgressReport(taskName, progressReport);
+      google.script.host.close();
+    }
+
+    fetchTasks();
+  </script>
+</body>
+</html>

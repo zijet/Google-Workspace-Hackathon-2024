@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+</head>
+<body>
+  <form id="statusForm">
+    <label for="taskName">Task Name:</label>
+    <select id="taskName" name="taskName">
+      <option value="">Select a task</option>
+    </select>
+    <br><br>
+    <label for="newStatus">New Status:</label>
+    <select id="newStatus" name="newStatus">
+      <option value="">Select a status</option>
+      <option value="In Progress">In Progress</option>
+      <option value="Done">Done</option>
+    </select>
+    <br><br>
+    <div id="progressReportDiv" style="display:none;">
+      <label for="aim">Aim to finish today:</label>
+      <input type="text" id="aim" name="aim">
+      <br><br>
+      <label for="progress">Current progress:</label>
+      <input type="text" id="progress" name="progress">
+      <br><br>
+      <label for="status">Status:</label>
+      <input type="text" id="status" name="status">
+      <br><br>
+    </div>
+    <div id="folderURLDiv" style="display:none;">
+      <label for="folderURL">Folder URL:</label>
+      <input type="url" id="folderURL" name="folderURL">
+      <br><br>
+    </div>
+    <input type="button" value="Submit" onclick="submitForm()">
+  </form>
+
+  <script>
+    function fetchTasks() {
+      google.script.run.withSuccessHandler(populateTaskNames).getTaskNames();
+    }
+
+    function populateTaskNames(taskNames) {
+      var taskNameSelect = document.getElementById('taskName');
+      taskNameSelect.innerHTML = '<option value="">Select a task</option>';
+      for (var i = 0; i < taskNames.length; i++) {
+        var option = document.createElement('option');
+        option.value = taskNames[i];
+        option.text = taskNames[i];
+        taskNameSelect.add(option);
+      }
+    }
+
+    function submitForm() {
+      var form = document.getElementById('statusForm');
+      var taskName = form.taskName.value;
+      var newStatus = form.newStatus.value;
+      var progressReport = `Aim to finish today: ${form.aim.value}\nCurrent progress: ${form.progress.value}\nStatus: ${form.status.value}`;
+      var folderURL = form.folderURL.value;
+
+      google.script.run.changeTaskStatus(taskName, newStatus, progressReport, folderURL);
+      google.script.host.close();
+    }
+
+    document.getElementById('newStatus').addEventListener('change', function() {
+      var newStatus = this.value;
+      document.getElementById('progressReportDiv').style.display = newStatus === 'In Progress' ? 'block' : 'none';
+      document.getElementById('folderURLDiv').style.display = newStatus === 'Done' ? 'block' : 'none';
+    });
+
+    fetchTasks();
+  </script>
+</body>
+</html>

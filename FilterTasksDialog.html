@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+</head>
+<body>
+  <form id="filterForm">
+    <h3>Filter Tasks</h3>
+    <label><input type="checkbox" name="status" value="To Do"> To Do</label><br>
+    <label><input type="checkbox" name="status" value="In Progress"> In Progress</label><br>
+    <label><input type="checkbox" name="status" value="Done"> Done</label><br>
+    <label><input type="checkbox" name="priority" value="High"> High Priority (Red)</label><br>
+    <label><input type="checkbox" name="priority" value="Medium"> Medium Priority (Yellow)</label><br>
+    <label><input type="checkbox" name="priority" value="Low"> Low Priority (Green)</label><br>
+    <label><input type="checkbox" name="taskInvolveMe"> Tasks Involving Me</label><br>
+    <input type="button" value="Apply Filters" onclick="applyFilters()">
+  </form>
+
+  <script>
+    function applyFilters() {
+      var form = document.getElementById('filterForm');
+      var filters = {
+        status: [],
+        priority: [],
+        taskInvolveMe: form.taskInvolveMe.checked
+      };
+
+      var statusElements = form.querySelectorAll('input[name="status"]:checked');
+      for (var i = 0; i < statusElements.length; i++) {
+        filters.status.push(statusElements[i].value);
+      }
+
+      var priorityElements = form.querySelectorAll('input[name="priority"]:checked');
+      for (var i = 0; i < priorityElements.length; i++) {
+        filters.priority.push(priorityElements[i].value);
+      }
+
+      google.script.run.filterTasks(filters);
+      google.script.host.close();
+    }
+  </script>
+</body>
+</html>
